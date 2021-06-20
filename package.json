@@ -1,0 +1,24 @@
+{
+  "name": "database-js-jsonaws",
+  "version": "1.0.0",
+  "description": "Database-js driver for JSON files stored on AWS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aimix/database-js-jsonaws.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aimix/database-js-jsonaws/issues"
+  },
+  "homepage": "https://github.com/aimix/database-js-jsonaws#readme",
+  "devDependencies": {
+    "database-js": "^3.0.10",
+    "jl-sql-api": "^2.8.1",
+    "mocha": "^5.2.0"
+  }
+}
