@@ -6,7 +6,7 @@ var fs = require( 'fs' );
  * 
  * @see https://github.com/mlaanderson/database-js
  */
-class JsonDriver {
+class JsonAwsDriver {
 
     /**
      * Constructor
@@ -182,7 +182,7 @@ module.exports = {
             });
         }
 
-        return new JsonDriver( connection.Database, options );
+        return new JsonAwsDriver( connection.Database, options );
     }
 
 };
