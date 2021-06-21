@@ -31,8 +31,6 @@ class JsonAwsDriver {
             charset: 'utf-8',
             checkOnConnect: true
         }, options || {} );
-console.log("this._options");
-console.log(this._options);
         this._data = null;
 
         if ( this._options.checkOnConnect && ! fs.existsSync( this._filename ) ) {
@@ -46,7 +44,6 @@ console.log(this._options);
      * @returns {Promise}
      */
     _loadFile() {
-        console.log("_loadFile " + this._aws_s3);
         var _this = this;
         return new Promise( function ( resolve, reject ) {
 
@@ -54,7 +51,6 @@ console.log(this._options);
                 Bucket: _this._options.bucket,
                 Key: _this._filename
             };
-            console.log(params);
             _this._aws_s3.getObject(params, function (err, data) {
                 if ( err ) {
                     if(err.code=='NoSuchKey'){
@@ -93,8 +89,6 @@ console.log(this._options);
     _saveFile() {
         var _this = this;
         return new Promise( function ( resolve, reject ) {
-            console.log(_this._options);
-
             const params = {
                 Bucket: _this._options.bucket,
                 Key: _this._filename,
@@ -135,7 +129,6 @@ console.log(this._options);
      * @returns {Promise}
      */
     data( reloadFile ) {
-        console.log("data " + this._aws_s3);
         if ( this._data && ! reloadFile ) {
             return Promise.resolve( this._data );
         }
@@ -153,7 +146,6 @@ console.log(this._options);
      * @returns {Promise}
      */
     query( sql ) {
-        console.log("query " + this._aws_s3);
         var _this = this;
         return new Promise( function( resolve, reject ) {
 
@@ -179,7 +171,6 @@ console.log(this._options);
      * @returns {Promise}
      */    
     execute( sql ) {
-        console.log("execute " + this._aws_s3);
         var _this = this;
         return new Promise( function( resolve, reject ) {
 
@@ -202,7 +193,6 @@ console.log(this._options);
 module.exports = {
     
     open: function( connection ) {
-        console.log(connection);
         // var options = {};
 
         const options = {
