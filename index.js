@@ -29,7 +29,7 @@ class JsonAwsDriver {
 
         this._options = Object.assign( {
             charset: 'utf-8',
-            checkOnConnect: true
+            checkOnConnect: false
         }, options || {} );
         this._data = null;
 

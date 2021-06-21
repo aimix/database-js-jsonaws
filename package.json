@@ -1,6 +1,6 @@
 {
   "name": "database-js-jsonaws",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Database-js driver for JSON files stored on AWS",
   "main": "index.js",
   "scripts": {
