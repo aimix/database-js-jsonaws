@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/aimix/database-js-jsonaws#readme",
   "devDependencies": {
+    "aws-sdk": "^2.213.1",
     "database-js": "^3.0.10",
     "jl-sql-api": "^2.8.1",
     "mocha": "^5.2.0"

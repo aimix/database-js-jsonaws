@@ -1,6 +1,9 @@
 var JlSqlApi = require( 'jl-sql-api' );
 var fs = require( 'fs' );
 
+
+
+var AWS = require('aws-sdk');
 /**
  * Database-js driver for JSON files.
  * 
@@ -18,6 +21,8 @@ class JsonAwsDriver {
      */
     constructor( filename, options ) {
 
+        AWS.config.update({ accessKeyId: options.user, secretAccessKey: options.password });
+        this._aws_s3 = new AWS.S3();
         this._api = new JlSqlApi();
 
         this._filename = filename;
@@ -26,7 +31,8 @@ class JsonAwsDriver {
             charset: 'utf-8',
             checkOnConnect: true
         }, options || {} );
-
+console.log("this._options");
+console.log(this._options);
         this._data = null;
 
         if ( this._options.checkOnConnect && ! fs.existsSync( this._filename ) ) {
@@ -40,8 +46,31 @@ class JsonAwsDriver {
      * @returns {Promise}
      */
     _loadFile() {
+        console.log("_loadFile " + this._aws_s3);
         var _this = this;
         return new Promise( function ( resolve, reject ) {
+
+            var params = {
+                Bucket: _this._options.bucket,
+                Key: _this._filename
+            };
+            console.log(params);
+            _this._aws_s3.getObject(params, function (err, data) {
+                if ( err ) {
+                    if(err.code=='NoSuchKey'){
+                        return resolve( JSON.parse( "[]" ) );
+                    } else {
+                        return reject( err );
+                    }
+                }
+                try {
+                    return resolve( JSON.parse( data.Body.toString() ) );
+                } catch ( e ) {
+                    return reject( e );
+                }
+            });
+            
+            /*
             fs.readFile( _this._filename, _this._options.charset, function ( err, data ) {
                 if ( err ) {
                     return reject( err );
@@ -52,6 +81,7 @@ class JsonAwsDriver {
                     return reject( e );
                 }
             } );
+            */
         } );
     }
 
@@ -63,6 +93,26 @@ class JsonAwsDriver {
     _saveFile() {
         var _this = this;
         return new Promise( function ( resolve, reject ) {
+            console.log(_this._options);
+
+            const params = {
+                Bucket: _this._options.bucket,
+                Key: _this._filename,
+                Body: JSON.stringify( _this._data || [] ),
+                ACL: 'public-read',
+                ContentType: 'text/html; charset=utf-8'
+            }
+            _this._aws_s3.upload(params, (err, data) => {
+                if (err) { 
+                        return reject( err );
+                 }
+                 return resolve();
+            });
+            /*
+            
+            
+            
+            
             fs.writeFile(
                 _this._filename,
                 JSON.stringify( _this._data || [] ),
@@ -73,7 +123,8 @@ class JsonAwsDriver {
                     }
                     return resolve();
                 }
-            );
+                );
+                */
         } );        
     }
 
@@ -84,6 +135,7 @@ class JsonAwsDriver {
      * @returns {Promise}
      */
     data( reloadFile ) {
+        console.log("data " + this._aws_s3);
         if ( this._data && ! reloadFile ) {
             return Promise.resolve( this._data );
         }
@@ -101,6 +153,7 @@ class JsonAwsDriver {
      * @returns {Promise}
      */
     query( sql ) {
+        console.log("query " + this._aws_s3);
         var _this = this;
         return new Promise( function( resolve, reject ) {
 
@@ -126,6 +179,7 @@ class JsonAwsDriver {
      * @returns {Promise}
      */    
     execute( sql ) {
+        console.log("execute " + this._aws_s3);
         var _this = this;
         return new Promise( function( resolve, reject ) {
 
@@ -148,8 +202,16 @@ class JsonAwsDriver {
 module.exports = {
     
     open: function( connection ) {
+        console.log(connection);
+        // var options = {};
 
-        var options = {};
+        const options = {
+            bucket: connection.Hostname || 'bucketname',
+            user: connection.Username || 'ACCESSKEYID',
+            password: connection.Password || 'SECRETACCESSKEY',
+            database: connection.Database
+        };
+
         if ( connection.Parameters ) {
             connection.Parameters.split( '&' ).map( function ( s ) {
 
